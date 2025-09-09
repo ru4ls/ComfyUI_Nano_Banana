@@ -14,7 +14,7 @@ Then, restart ComfyUI.
 
 ## API Key Setup
 
-To use these nodes, you need a Google AI API key. You can obtain one from the [Google AI Studio](https://aistudio.google.com/app/apikey).
+To use these nodes, you need a Google AI API key. You can obtain one from the [Google AI Studio](https://aistudio.google.com/app/apikey). Please note that the Gemini API is a paid service and may incur costs.
 
 Create a `config.json` file in the `ComfyUI_Nano_Banana` directory with the following content:
 
@@ -31,6 +31,8 @@ Create a `config.json` file in the `ComfyUI_Nano_Banana` directory with the foll
 
 This node generates an image from a text prompt using the Gemini 2.5 Flash Image Preview API.
 
+![Text to Image](media/ComfyUI_Nano_Banana-t2i.png)
+
 **Inputs:**
 
 *   `prompt`: The text prompt for the image generation.
@@ -46,6 +48,8 @@ This node generates an image from a text prompt using the Gemini 2.5 Flash Image
 
 This node takes a single input image and a text prompt to generate a new image.
 
+![Image to Image](media/ComfyUI_Nano_Banana-i2i.png)
+
 **Inputs:**
 
 *   `prompt`: A text prompt describing the desired changes.
@@ -58,6 +62,8 @@ This node takes a single input image and a text prompt to generate a new image.
 ### NanoBananaMultiImageToImage
 
 This node takes multiple input images and a text prompt to generate a new image, allowing the model to reference all provided images.
+
+![Multi-Image to Image](media/ComfyUI_Nano_Banana-mi2i.png)
 
 **Inputs:**
 
@@ -103,3 +109,7 @@ You can install the required packages using pip:
 ```bash
 pip install -r requirements.txt
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
