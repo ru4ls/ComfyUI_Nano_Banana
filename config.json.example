@@ -1,0 +1,4 @@
+{
+  "api_key": "YOUR_API_KEY_HERE",
+  "url_endpoint": "https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-image-preview:generateContent"
+}
