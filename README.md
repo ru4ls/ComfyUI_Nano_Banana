@@ -1,5 +1,9 @@
 # ComfyUI_Nano_Banana
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
+[![Built with Gemini](https://img.shields.io/badge/Built_with-Gemini-blue.svg)](https://deepmind.google/technologies/gemini/)
+
 A set of custom nodes for ComfyUI that leverage the Gemini 2.5 Flash Image Preview API to generate images from text prompts, single images, and multiple images.
 
 ## Installation
@@ -8,6 +12,16 @@ To install the Nano Banana nodes, clone this repository into your `ComfyUI/custo
 
 ```bash
 git clone https://github.com/ru4ls/ComfyUI_Nano_Banana.git
+```
+
+## Dependencies
+
+*   `requests`
+
+You can install the required packages using pip:
+
+```bash
+pip install -r requirements.txt
 ```
 
 Then, restart ComfyUI.
@@ -27,7 +41,7 @@ Create a `config.json` file in the `ComfyUI_Nano_Banana` directory with the foll
 
 ## Nodes
 
-### NanoBananaTextToImage
+### Nano Banana Text-To-Image
 
 This node generates an image from a text prompt using the Gemini 2.5 Flash Image Preview API.
 
@@ -44,7 +58,8 @@ This node generates an image from a text prompt using the Gemini 2.5 Flash Image
 
 *   `image`: The generated image.
 
-### NanoBananaImageToImage
+
+### Nano Banana Image-To-Image
 
 This node takes a single input image and a text prompt to generate a new image.
 
@@ -59,11 +74,12 @@ This node takes a single input image and a text prompt to generate a new image.
 
 *   `image`: The newly generated image.
 
-### NanoBananaMultiImageToImage
+
+### Nano Banana Multi-Image-To-Image
 
 This node takes multiple input images and a text prompt to generate a new image, allowing the model to reference all provided images.
 
-![Multi-Image to Image](media/ComfyUI_Nano_Banana-mi2i.png)
+![Multi-Image to Image](media/ComfyUI_Nano_Banana-multi-i2i.png)
 
 **Inputs:**
 
@@ -75,12 +91,14 @@ This node takes multiple input images and a text prompt to generate a new image,
 
 *   `image`: The newly generated image.
 
+
 ## Example Usage
+
+!Important Make sure your API key is set up in 'config.json'.
 
 ### Text to Image
 
 1.  Add the `NanoBananaTextToImage` node to your workflow.
-2.  Make sure your API key is set up in `config.json`.
 3.  Enter a prompt.
 4.  Connect the output `image` to a `PreviewImage` node to see the result.
 
@@ -88,7 +106,6 @@ This node takes multiple input images and a text prompt to generate a new image,
 
 1.  Add the `NanoBananaImageToImage` node to your workflow.
 2.  Connect a `LoadImage` node to the `image` input.
-3.  Make sure your API key is set up in `config.json`.
 4.  Enter a prompt describing the changes you want to make.
 5.  Connect the output `image` to a `PreviewImage` node.
 
@@ -96,19 +113,9 @@ This node takes multiple input images and a text prompt to generate a new image,
 
 1.  Add the `NanoBananaMultiImageToImage` node to your workflow.
 2.  Connect two `LoadImage` nodes to the `image1` and `image2` inputs.
-3.  Make sure your API key is set up in `config.json`.
 4.  Enter a prompt.
 5.  Connect the output `image` to a `PreviewImage` node.
 
-## Dependencies
-
-*   `requests`
-
-You can install the required packages using pip:
-
-```bash
-pip install -r requirements.txt
-```
 
 ## License
 
