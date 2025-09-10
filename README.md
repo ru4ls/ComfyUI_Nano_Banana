@@ -11,7 +11,7 @@ A set of custom nodes for ComfyUI that leverage the Gemini 2.5 Flash Image Previ
 1.  Clone this repository into your `custom_nodes` folder.
     ```bash
     cd ComfyUI/custom_nodes
-    git clone https://github.com/your_username/ComfyUI_Nano_Banana.git
+    git clone https://github.com/ru4ls/ComfyUI_Nano_Banana.git
     ```
 2.  Install the required dependencies:
     ```bash
@@ -47,18 +47,15 @@ This node provides a flexible interface for image generation, supporting text-to
 
 To use these nodes, you need a Google AI API key. You can obtain one from the [Google AI Studio](https://aistudio.google.com/app/apikey). Please note that the Gemini API is a paid service and may incur costs.
 
-Create a `config.json` file in the `ComfyUI_Nano_Banana` directory with the following content:
+Create a `.env` file in the `ComfyUI_Nano_Banana` directory with the following content:
 
-```json
-{
-  "api_key": "YOUR_API_KEY_HERE",
-  "url_endpoint": "https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-image-preview:generateContent"
-}
+```
+REPLICATE_API_KEY="YOUR_API_KEY"
 ```
 
 ## Example Usage
 
-!Important Make sure your API key is set up in 'config.json'.
+!Important Make sure your API key is set up in the `.env` file.
 
 ### Text to Image Generation
 

@@ -4,15 +4,10 @@ from PIL import Image
 import requests
 import base64
 import io
-import json
 import os
+from dotenv import load_dotenv
 
-def load_config():
-    config_path = os.path.join(os.path.dirname(__file__), "config.json")
-    if os.path.exists(config_path):
-        with open(config_path, 'r') as f:
-            return json.load(f)
-    return {}
+load_dotenv()
 
 def image_to_base64(image_tensor):
     image_pil = Image.fromarray((image_tensor[0].cpu().numpy() * 255.).astype(np.uint8)).convert("RGB")
@@ -45,12 +40,11 @@ class NanoBanana:
 
     def generate_image(self, prompt, seed=0, width=1024, height=1024,
                        image_1=None, image_2=None, image_3=None, image_4=None, image_5=None):
-        config = load_config()
-        api_key = config.get("api_key")
+        api_key = os.getenv("REPLICATE_API_KEY")
         if not api_key:
-            raise Exception("API key not found in config.json file.")
+            raise Exception("API key not found in .env file.")
 
-        url = config.get("url_endpoint", "https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-image-preview:generateContent")
+        url = os.getenv("URL_ENDPOINT", "https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-image-preview:generateContent")
 
         headers = {
             "Content-Type": "application/json",
