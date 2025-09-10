@@ -1,16 +1,12 @@
 
-from .nano_banana_nodes import NanoBananaTextToImage, NanoBananaImageToImage, NanoBananaMultiImageToImage
+from .nano_banana_nodes import NanoBanana
 
 NODE_CLASS_MAPPINGS = {
-    "NanoBananaTextToImage": NanoBananaTextToImage,
-    "NanoBananaImageToImage": NanoBananaImageToImage,
-    "NanoBananaMultiImageToImage": NanoBananaMultiImageToImage,
+    "NanoBanana": NanoBanana,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "NanoBananaTextToImage": "Nano Banana Text to Image",
-    "NanoBananaImageToImage": "Nano Banana Image to Image",
-    "NanoBananaMultiImageToImage": "Nano Banana Multi-Image to Image",
+    "NanoBanana": "Nano Banana",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
