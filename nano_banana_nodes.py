@@ -36,7 +36,7 @@ class NanoBanana:
 
     RETURN_TYPES = ("IMAGE",)
     FUNCTION = "generate_image"
-    CATEGORY = "Gemini/NanoBanana"
+    CATEGORY = "Ru4ls/NanoBanana"
 
     def generate_image(self, prompt, seed=0, width=1024, height=1024,
                        image_1=None, image_2=None, image_3=None, image_4=None, image_5=None):
