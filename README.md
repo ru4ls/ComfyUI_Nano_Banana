@@ -8,23 +8,40 @@ A set of custom nodes for ComfyUI that leverage the Gemini 2.5 Flash Image Previ
 
 ## Installation
 
-To install the Nano Banana nodes, clone this repository into your `ComfyUI/custom_nodes/` directory:
+1.  Clone this repository into your `custom_nodes` folder.
+    ```bash
+    cd ComfyUI/custom_nodes
+    git clone https://github.com/your_username/ComfyUI_Nano_Banana.git
+    ```
+2.  Install the required dependencies:
+    ```bash
+    pip install -r ComfyUI_Nano_Banana/requirements.txt
+    ```
 
-```bash
-git clone https://github.com/ru4ls/ComfyUI_Nano_Banana.git
-```
+## Nodes
 
-## Dependencies
+### Nano Banana
 
-*   `requests`
+## Model Limitations
 
-You can install the required packages using pip:
+Please be aware that the `gemini-2.5-flash-image-preview` model used by these nodes has a fixed output resolution of 1024x1024 pixels. While the node provides `width` and `height` inputs, these are primarily for compatibility with ComfyUI's interface and do not directly control the output resolution of the generated image. The model will always produce a 1024x1024 image.
 
-```bash
-pip install -r requirements.txt
-```
+Attempting to influence the aspect ratio by including it in the prompt (e.g., "a dog, aspect ratio 16:9") acts as a compositional hint to the model, guiding how it frames the image within the 1024x1024 canvas. It does not change the actual pixel dimensions of the output.
 
-Then, restart ComfyUI.
+This node provides a flexible interface for image generation, supporting text-to-image and image-to-image workflows with up to five reference images.
+
+**Inputs:**
+
+*   `prompt` (STRING): The text prompt for image generation or manipulation.
+*   `seed` (INT, optional): Seed for reproducibility (default: 0).
+*   `width` (INT, optional): Width of the generated image (default: 1024). Used primarily for text-to-image generation.
+*   `height` (INT, optional): Height of the generated image (default: 1024). Used primarily for text-to-image generation.
+*   `image_1` to `image_5` (IMAGE, optional): Up to five reference images. Provide at least one image for image-to-image generation.
+
+**Outputs:**
+
+*   `image` (IMAGE): The generated image.
+
 
 ## API Key Setup
 
@@ -39,82 +56,32 @@ Create a `config.json` file in the `ComfyUI_Nano_Banana` directory with the foll
 }
 ```
 
-## Nodes
-
-### Nano Banana Text-To-Image
-
-This node generates an image from a text prompt using the Gemini 2.5 Flash Image Preview API.
-
-![Text to Image](media/ComfyUI_Nano_Banana-t2i.png)
-
-**Inputs:**
-
-*   `prompt`: The text prompt for the image generation.
-*   `seed`: The seed for the generation (default: 0).
-*   `width`: The width of the generated image (default: 1024).
-*   `height`: The height of the generated image (default: 1024).
-
-**Output:**
-
-*   `image`: The generated image.
-
-
-### Nano Banana Image-To-Image
-
-This node takes a single input image and a text prompt to generate a new image.
-
-![Image to Image](media/ComfyUI_Nano_Banana-i2i.png)
-
-**Inputs:**
-
-*   `prompt`: A text prompt describing the desired changes.
-*   `image`: The source image.
-
-**Output:**
-
-*   `image`: The newly generated image.
-
-
-### Nano Banana Multi-Image-To-Image
-
-This node takes multiple input images and a text prompt to generate a new image, allowing the model to reference all provided images.
-
-![Multi-Image to Image](media/ComfyUI_Nano_Banana-multi-i2i.png)
-
-**Inputs:**
-
-*   `prompt`: A text prompt describing the desired outcome.
-*   `image1`: The first source image.
-*   `image2`: (Optional) The second source image.
-
-**Output:**
-
-*   `image`: The newly generated image.
-
-
 ## Example Usage
 
 !Important Make sure your API key is set up in 'config.json'.
 
-### Text to Image
+### Text to Image Generation
 
-1.  Add the `NanoBananaTextToImage` node to your workflow.
-3.  Enter a prompt.
+1.  Add the `NanoBanana` node to your workflow.
+2.  Enter a `prompt`.
+3.  Ensure no `image_` inputs are connected.
 4.  Connect the output `image` to a `PreviewImage` node to see the result.
 
-### Image to Image
+**Sample Prompt:** "A delicious-looking cheeseburger with fresh lettuce, tomatoes, and melted cheese on a sesame seed bun, professional food photography"
 
-1.  Add the `NanoBananaImageToImage` node to your workflow.
-2.  Connect a `LoadImage` node to the `image` input.
-4.  Enter a prompt describing the changes you want to make.
-5.  Connect the output `image` to a `PreviewImage` node.
+![Text to Image Generation Example](media/ComfyUI_Nano_Banana-t2i.png)
 
-### Multi-Image to Image
 
-1.  Add the `NanoBananaMultiImageToImage` node to your workflow.
-2.  Connect two `LoadImage` nodes to the `image1` and `image2` inputs.
-4.  Enter a prompt.
-5.  Connect the output `image` to a `PreviewImage` node.
+### Image to Image Generation (with 1 to 5 reference images)
+
+1.  Add the `NanoBanana` node to your workflow.
+2.  Connect one or more `LoadImage` nodes (up to 5) to the `image_1` to `image_5` inputs.
+3.  Enter a `prompt` describing the desired changes or outcome.
+4.  Connect the output `image` to a `PreviewImage` node.
+
+**Sample Prompt:** "Image_2 serves Image_1 to Image_3 in a small, classic fisherman's bar."
+
+![Image to Image Generation Example](media/ComfyUI_Nano_Banana-multi-i2i.png)
 
 
 ## License
