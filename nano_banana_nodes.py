@@ -1,36 +1,35 @@
+import os
+import io
 import torch
 import numpy as np
+
 from PIL import Image
-import requests
-import base64
-import io
-import os
 from dotenv import load_dotenv
 
+from google import genai
+from google.genai import types
+
+# Load environment variables from a .env file
 load_dotenv()
 
-def image_to_base64(image_tensor):
-    image_pil = Image.fromarray((image_tensor[0].cpu().numpy() * 255.).astype(np.uint8)).convert("RGB")
-    buffered = io.BytesIO()
-    image_pil.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode('utf-8')
+# --- Utility Function ---
+def image_to_pil(image_tensor):
+    """Convert a PyTorch tensor to PIL Image"""
+    return Image.fromarray((image_tensor[0].cpu().numpy() * 255.).astype(np.uint8))
 
 class NanoBanana:
     @classmethod
     def INPUT_TYPES(s):
+        model_list = ["gemini-2.5-flash-image", "gemini-2.5-flash-image-preview"]
         return {
             "required": {
-                "prompt": ("STRING", {"multiline": True}),
+                "model_name": (model_list, {"default": model_list[0]}),
+                "prompt": ("STRING", {"multiline": True, "default": "A futuristic nano banana dish"}),
             },
             "optional": {
-                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
-                "width": ("INT", {"default": 1024, "min": 64, "max": 4096, "step": 64}),
-                "height": ("INT", {"default": 1024, "min": 64, "max": 4096, "step": 64}),
-                "image_1": ("IMAGE",),
-                "image_2": ("IMAGE",),
-                "image_3": ("IMAGE",),
-                "image_4": ("IMAGE",),
-                "image_5": ("IMAGE",),
+                "image_1": ("IMAGE",), "image_2": ("IMAGE",), "image_3": ("IMAGE",),
+                "aspect_ratio": (["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"], {"default": "1:1"}),
+                "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.1}),
             }
         }
 
@@ -38,59 +37,55 @@ class NanoBanana:
     FUNCTION = "generate_image"
     CATEGORY = "Ru4ls/NanoBanana"
 
-    def generate_image(self, prompt, seed=0, width=1024, height=1024,
-                       image_1=None, image_2=None, image_3=None, image_4=None, image_5=None):
-        api_key = os.getenv("REPLICATE_API_KEY")
-        if not api_key:
-            raise Exception("API key not found in .env file.")
-
-        url = os.getenv("URL_ENDPOINT", "https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-image-preview:generateContent")
-
-        headers = {
-            "Content-Type": "application/json",
-            "x-goog-api-key": api_key
-        }
-
-        parts = [{"text": prompt}]
-
-        images = [image_1, image_2, image_3, image_4, image_5]
-        for img_tensor in images:
-            if img_tensor is not None:
-                image_b64 = image_to_base64(img_tensor)
-                parts.append({
-                    "inline_data": {
-                        "mime_type": "image/png",
-                        "data": image_b64
-                    }
-                })
-
-        data = {"contents": [{"parts": parts}]}
-
+    def generate_image(self, model_name, prompt, image_1=None, image_2=None, image_3=None, aspect_ratio="1:1", temperature=1.0):
         try:
-            response = requests.post(url, headers=headers, json=data)
-            response.raise_for_status()
-            result = response.json()
+            # --- 1. Initialize the Client with an API Key ---
+            api_key = os.getenv("GOOGLE_API_KEY")
+            if not api_key:
+                raise Exception("GOOGLE_API_KEY not found in .env file.")
             
-            if 'candidates' not in result or not result['candidates']:
-                raise Exception("No candidates found in API response")
+            client = genai.Client(api_key=api_key)
 
-            parts = result['candidates'][0]['content']['parts']
-            for part in parts:
-                if 'inlineData' in part:
-                    image_data_b64 = part['inlineData']['data']
-                    image_data = base64.b64decode(image_data_b64)
-                    image = Image.open(io.BytesIO(image_data)).convert("RGB")
-                    
-                    image = np.array(image).astype(np.float32) / 255.0
-                    image = torch.from_numpy(image)[None,]
-                    
-                    return (image,)
+            # --- 2. Prepare Contents ---
+            contents = [prompt]
+            images = [image_1, image_2, image_3]
+            for img_tensor in images:
+                if img_tensor is not None:
+                    contents.append(image_to_pil(img_tensor))
+
+            # --- 3. Create the Full Configuration ---
+            config = types.GenerateContentConfig(
+                response_modalities=["IMAGE"],
+                image_config=types.ImageConfig(aspect_ratio=aspect_ratio),
+                temperature=temperature
+            )
             
-            raise Exception("No image data found in API response")
+            # --- 4. Call the Correct, Unified Method ---
+            response = client.models.generate_content(
+                model=model_name,
+                contents=contents,
+                config=config
+            )
+            
+            # --- 5. Parse the Response (Same robust parsing) ---
+            if not response.candidates:
+                raise Exception("API returned no candidates.")
 
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"API request failed: {e}")
-        except (KeyError, IndexError) as e:
-            raise Exception(f"Failed to parse API response: {e}")
+            image_bytes = None
+            for part in response.candidates[0].content.parts:
+                if part.inline_data:
+                    image_bytes = part.inline_data.data
+                    break
+            
+            if image_bytes is None:
+                raise Exception("No image data found in the API response.")
+
+            pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            
+            image_np = np.array(pil_image).astype(np.float32) / 255.0
+            image_tensor = torch.from_numpy(image_np)[None,]
+            
+            return (image_tensor,)
+
         except Exception as e:
-            raise Exception(f"An error occurred: {e}")
+            raise Exception(f"An error occurred in NanoBananaAPIKeyNode: {type(e).__name__} - {e}")

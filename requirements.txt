@@ -1,2 +1,20 @@
-requests
+# requirements.txt
+
+# For loading the GOOGLE_API_KEY from your .env file
 python-dotenv
+
+# The official Google AI Python SDK.
+# We list this transitional package because it has proven to enforce the
+# correct versioning of its underlying dependencies (like google-generativeai)
+# during installation in this environment.
+google-generativeai
+google-genai
+
+# For image processing (PIL) to handle image data
+Pillow
+
+# --- Assumed Core Dependencies ---
+# These packages are typically required by the host application (e.g., ComfyUI)
+# and are listed here for completeness.
+# torch
+# numpy
