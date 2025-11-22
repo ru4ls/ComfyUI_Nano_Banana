@@ -6,7 +6,7 @@
 
 A set of custom nodes for ComfyUI that leverage the official Google Generative AI SDK to generate images from text prompts, single images, and multiple images with configurable aspect ratios and resolutions using the Gemini Image model.
 
-## Changelog
+## Whats New
 ### Version 3.0 - The Pro & Stability Update
 This update brings advanced capabilities from the Gemini Pro models including image size selection, focused on the most stable Pro model for enhanced image generation.
 
@@ -105,6 +105,10 @@ This node provides a flexible interface for image generation with support for mu
 
 **Sample Prompt:** "A cinematic close-up of a transparent glass chess piece (a knight) aimed at the camera. Inside the glass piece, a tiny glowing galaxy swirls with purple and gold nebulae. The background is a dimly lit library with dust motes dancing in a single shaft of volumetric golden hour light striking the chess piece, creating caustic light refractions on the wooden table."
 
+<img width="1534" height="635" alt="Screenshot 2025-11-22 073404" src="https://github.com/user-attachments/assets/10c41dc3-074c-4112-afe9-30bc6a0091f0" />
+
+<img width="1920" height="815" alt="NanoBanana_Pro_00004_" src="https://github.com/user-attachments/assets/73e67243-d412-41fb-82ee-841840db22c7" />
+
 
 ### Image Editing and Image Fusion Generation (with configurable aspect ratio and 1 to 6 reference images)
 
@@ -115,6 +119,10 @@ This node provides a flexible interface for image generation with support for mu
 5.  Connect the output `image` to a `PreviewImage` or `SaveImage` node to see the result.
 
 **Sample Prompt:** "A high-speed freeze-frame photograph of the glass chess knight shattering into thousands of sharp, crystalline shards. The galaxy inside is bursting outward, spilling purple and gold nebulae mist into the room. The glass fragments are suspended in mid-air, each one refracting the golden sunlight and the internal galaxy light. The wooden table is covered in glittering debris. Maintain the realistic depth of field and volumetric dust."
+
+<img width="1649" height="548" alt="Screenshot 2025-11-22 074627" src="https://github.com/user-attachments/assets/27477ae8-6a59-42a4-9d7d-ff6bb79eb048" />
+
+<img width="1920" height="815" alt="NanoBanana_Pro_00005_" src="https://github.com/user-attachments/assets/1132c06a-5b9c-40bf-8358-2c9cef05210b" />
 
 
 ## License
