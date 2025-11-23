@@ -6,8 +6,6 @@
 
 A set of custom nodes for ComfyUI that leverage both Google Vertex AI and Google Generative AI SDK to generate images from text prompts, single images, and multiple images with configurable aspect ratios and resolutions using the Gemini Image model.
 
-For a complete history of changes, see the [CHANGELOG.md](CHANGELOG.md) file.
-
 ## What's New
 
 ### Version 4.0 - The Grounding, Dual Approach & Project Structure Update
@@ -110,7 +108,6 @@ This node provides a flexible interface for image generation with support for mu
 *   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
 *   `temperature` (FLOAT, optional): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic.
 
-
 **Available Aspect Ratios & Resolutions:**
 *   `1:1` - 1024x1024 (square)
 *   `2:3` - 832x1248 (portrait)
@@ -141,7 +138,6 @@ This node enables image generation that is grounded in real-time Google Search r
 *   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (default: `1:1`).
 *   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
 *   `temperature` (FLOAT, optional): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic.
-
 
 **Available Aspect Ratios & Resolutions:**
 *   `1:1` - 1024x1024 (square)
@@ -175,6 +171,9 @@ This node enables image generation that is grounded in real-time Google Search r
 
 **Sample Prompt:** "A cinematic close-up of a transparent glass chess piece (a knight) aimed at the camera. Inside the glass piece, a tiny glowing galaxy swirls with purple and gold nebulae. The background is a dimly lit library with dust motes dancing in a single shaft of volumetric golden hour light striking the chess piece, creating caustic light refractions on the wooden table."
 
+<img width="1540" height="495" alt="Screenshot 2025-11-23 113738" src="https://github.com/user-attachments/assets/9ded57b5-b0a8-4de8-b201-93f429fc050f" />
+<img width="1920" height="815" alt="NanoBanana_Pro_00010_" src="https://github.com/user-attachments/assets/020f7a72-d2d7-4c06-948c-3e1afa2887dc" />
+
 
 ### Image Editing and Image Fusion Generation (with configurable aspect ratio and 1 to 6 reference images)
 
@@ -185,6 +184,9 @@ This node enables image generation that is grounded in real-time Google Search r
 5.  Connect the output `image` to a `PreviewImage` or `SaveImage` node to see the result.
 
 **Sample Prompt:** "A high-speed freeze-frame photograph of the glass chess knight shattering into thousands of sharp, crystalline shards. The galaxy inside is bursting outward, spilling purple and gold nebulae mist into the room. The glass fragments are suspended in mid-air, each one refracting the golden sunlight and the internal galaxy light. The wooden table is covered in glittering debris. Maintain the realistic depth of field and volumetric dust."
+
+<img width="1717" height="473" alt="Screenshot 2025-11-23 114319" src="https://github.com/user-attachments/assets/1d161151-d7ab-43f1-b683-fb8838d00430" />
+<img width="1920" height="815" alt="NanoBanana_Pro_00011_" src="https://github.com/user-attachments/assets/eaf03061-f419-4782-b9a1-864b8b52103b" />
 
 
 ### Grounding with Search Results Generation
@@ -197,13 +199,15 @@ This node enables image generation that is grounded in real-time Google Search r
 6.  Connect the two outputs: `image` and `grounding_sources` to appropriate display nodes.
 7.  The `grounding_sources` output will contain citations and links to the sources used in generating the response.
 
-**Sample Prompt:** "Search for and visualize the current weather forecast for the next 5 days in San Francisco in a clean, modern glass hud style with the city as a bacground weather chart. Add a realistic visual of what I could wear each day."
+**Sample Prompt:** "Search for and visualize the current weather forecast for the next 5 days in Jakarta in a clean, modern glass hud style with the city as a bacground weather chart. Add a realistic visual of what I could wear each day."
 
 **Example Workflow:**
 - The node will perform a Google search based on your prompt
 - Generate an image based on the search results
 - List all sources and citations used in the generation process
 
+<img width="1809" height="494" alt="Screenshot 2025-11-23 115440" src="https://github.com/user-attachments/assets/a5642e7c-d801-4a87-ba85-f7d2f4221541" />
+<img width="1920" height="814" alt="NanoBanana_Pro_00012_" src="https://github.com/user-attachments/assets/da5af049-01a3-49b2-88ba-26d8b92050e4" />
 
 ## License
 
