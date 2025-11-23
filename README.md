@@ -52,7 +52,7 @@ For a complete history of changes, see the [CHANGELOG.md](CHANGELOG.md) file.
 
 You can use either Google Generative AI API approach (simpler) or Google Vertex AI approach (more powerful) depending on your needs.
 
-### Option 1: Google Generative AI API (Recommended for beginners)
+### Option 1: Google Generative AI API
 To use the simpler API approach, you need a Google AI API key. You can obtain one from the [Google AI Studio](https://aistudio.google.com/app/apikey). Please note that the Gemini API is a paid service and may incur costs.
 
 1. Copy the `.env.api.template` file to create your `.env` file:
@@ -64,7 +64,7 @@ To use the simpler API approach, you need a Google AI API key. You can obtain on
    GOOGLE_API_KEY="your-actual-api-key-here"
    ```
 
-### Option 2: Google Vertex AI (For advanced users with full functionality)
+### Option 2: Google Vertex AI
 For access to the full functionality including the thinking process output and enhanced grounding capabilities, use the Vertex AI approach with your Google Cloud Project.
 
 To use this you need a Google Cloud Project with the Vertex AI API enabled.
