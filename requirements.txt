@@ -9,12 +9,11 @@ python-dotenv
 # during installation in this environment.
 google-generativeai
 google-genai
+google-cloud-aiplatform
 
-# For image processing (PIL) to handle image data
-Pillow
+# For image processing (PIL) to handle image data, Assume its already installed with ComfyUI, commented out to avoid version conflicts
+# Pillow
 
-# --- Assumed Core Dependencies ---
-# These packages are typically required by the host application (e.g., ComfyUI)
-# and are listed here for completeness.
+# Core Dependencies, Assume its already installed with ComfyUI, commented out to avoid version conflicts
 # torch
 # numpy

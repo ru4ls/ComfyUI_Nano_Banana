@@ -1,0 +1,50 @@
+# Changelog
+
+All notable changes to the ComfyUI_Nano_Banana project will be documented in this file.
+
+## [4.0.0] - The Grounding, Dual Approach & Project Structure Update 2025-11-23
+### Added
+- Grounding with Search Results functionality
+  - New "Nano Banana Grounding" node that generates images based on Google Search results
+  - Real-time search integration with proper citations and source references
+  - Three outputs: generated image, text response, and grounding sources
+  - Toggle to enable/disable search functionality
+- Enhanced output information with transparency into information sources
+- Dual Authentication Approach Support
+  - Support for both Google Vertex AI (with PROJECT_ID and LOCATION) and Google Generative AI API (with GOOGLE_API_KEY) approaches
+  - Automatic detection and switching between approaches based on available credentials
+  - Enhanced functionality when using Vertex AI (access to full text response and thinking process)
+  - Helpful guidance messages when API approach is used
+- Thinking Process Output
+  - New "thinking" output in the base NanoBanana node when using Vertex AI
+  - Provides insights into the AI's reasoning and decision-making process
+- Project Structure Reorganization
+  - Dedicated `core/`, `nodes/`, and `utils/` directories for better code organization
+  - Proper module structure following Python/ComfyUI best practices
+- Location Override Feature
+  - Automatic use of global location for gemini-3-pro models to ensure compatibility
+  - Models like gemini-3-pro-image-preview always use global endpoint regardless of user's LOCATION setting
+  - Fixes compatibility issues with different user LOCATION configurations
+
+## [3.0.0] - The Pro & Stability Update 2025-11-22
+### Added
+- Image Quality Control with options for 1K, 2K, 4K image sizes
+- Enhanced Multi-Image Support supporting up to 6 reference images
+- Pro Model Focus optimized for gemini-3-pro-image-preview
+- Better error handling with finish reason checking
+
+## [2.0.0] - The Fusion & Control Update 2025-10-10
+### Added
+- Full Aspect Ratio Control with 10 different aspect ratios (1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9)
+- Creative Control with Temperature parameter for randomness
+- Robust multi-image fusion supporting up to three reference images
+
+### Removed
+- Non-functional width, height, and seed inputs
+- Old 1024x1024 limitation
+
+## [1.0.0] - Initial Release
+### Added
+- Basic Nano Banana node for text-to-image generation
+- Support for image-to-image workflows
+- Initial Google Generative AI SDK integration
