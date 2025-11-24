@@ -8,13 +8,32 @@ A set of custom nodes for ComfyUI that leverage both Google Vertex AI and Google
 
 ## What's New
 
-### Version 4.0 - The Grounding, Dual Approach & Project Structure Update
-This major update adds powerful grounding with Google Search functionality, support for both Google Vertex AI and Google Generative AI API approaches, automatic project reorganization, and enhanced thinking process visibility.
+### Version 5.0 - The Unified AIO & Multi Image Generation Update
+This major update introduces a unified All-in-One (AIO) node that combines all features from existing nodes into a single, powerful interface with support for both single and multiple image generation.
 
-#### New Feature:
+#### New Features:
+
+**All-in-One (AIO) Node!**
+A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image (like NanoBananaGrounding) or multiple images (like the deprecated NanoBananaInterleaved) with the same powerful grounding, search, and thinking capabilities.
+
+**Multi Image Generation**
+Generate up to 10 alternative images (1-10) with grounding and search capabilities in a single node execution. Images are generated with numbered prompts (e.g., "Image 1 of 3", "Image 2 of 3") to create variations. All generated images, text responses, and grounding sources are combined into the appropriate outputs.
+
+**Backward Compatibility**
+Existing nodes (NanoBanana, NanoBananaGrounding) are maintained for compatibility with existing workflows.
+
+**Cleaner Architecture**
+Reduced code redundancy with shared functionality between single and multiple image generation modes, making the codebase more maintainable and efficient.
+
+---
+
+### Version 4.0 - The Grounding, Dual Approach & Project Structure Update
+This major update added powerful grounding with Google Search functionality, support for both Google Vertex AI and Google Generative AI API approaches, automatic project reorganization, and enhanced thinking process visibility.
+
+#### Previous Features:
 
 **Grounding with Search Results!**
-You can now generate images that are grounded in real-time Google Search results, with proper citations and source references. The new "Nano Banana Grounding with Search" node enables fact-based image generation with verifiable sources.
+Generate images that are grounded in real-time Google Search results, with proper citations and source references. The "Nano Banana Grounding with Search" node enables fact-based image generation with verifiable sources.
 
 **Enhanced Output Information**
 The grounding node provides three outputs: generated image, text response, and grounding sources with citations, allowing full transparency into the information sources used.
@@ -23,10 +42,10 @@ The grounding node provides three outputs: generated image, text response, and g
 The grounding node includes a boolean switch to enable or disable the Google Search tool as needed.
 
 **Dual Authentication Approach Support!**
-You can now use either Google Vertex AI approach (with PROJECT_ID and LOCATION) or Google Generative AI API approach (with GOOGLE_API_KEY) - the system automatically detects and uses the available credentials.
+Use either Google Vertex AI approach (with PROJECT_ID and LOCATION) or Google Generative AI API approach (with GOOGLE_API_KEY) - the system automatically detects and uses the available credentials.
 
 **Thinking Process Output**
-The base Nano Banana node now outputs the AI's thought process when using Vertex AI, providing insights into the AI's reasoning and decision-making.
+The base Nano Banana node outputs the AI's thought process when using Vertex AI, providing insights into the AI's reasoning and decision-making.
 
 **Project Structure Reorganization**
 The codebase has been reorganized into dedicated `core/`, `nodes/`, and `utils/` directories for better maintainability and following Python best practices.
@@ -95,7 +114,7 @@ The system automatically detects and uses the available credentials:
 
 ## Nodes
 
-### Nano Banana
+### Nano Banana (Will be deprecated next update)
 
 This node provides a flexible interface for image generation with support for multiple aspect ratios and image sizes, supporting text-to-image and image-to-image workflows with up to three reference images using the official Google Generative AI SDK. New features include model thought process visibility.
 
@@ -125,7 +144,7 @@ This node provides a flexible interface for image generation with support for mu
 *   `image` (IMAGE): The generated image.
 *   `thinking` (STRING): The AI's thought process and reasoning (only available when using Vertex AI approach; shows helpful message for API users).
 
-### Nano Banana Grounding
+### Nano Banana Grounding (Will be deprecated next update)
 
 This node enables image generation that is grounded in real-time Google Search results, with proper citations and source references. It allows for fact-based image generation with verifiable information from the web. The node provides transparency into the information sources used to generate the content.
 
@@ -158,6 +177,41 @@ This node enables image generation that is grounded in real-time Google Search r
 *   `grounding_sources` (STRING): Citation information with source URLs and search queries used to generate the response.
 
 **Note:** When using the Google Generative AI API approach (as opposed to VertexAI), the text_response and grounding_sources will include helpful messages about using Vertex AI for full capabilities.
+
+### Nano Banana All-in-One (AIO)
+
+This unified node combines all features from the existing nodes into a single, powerful interface. It dynamically adapts its behavior based on the `image_count` parameter: generating a single image (like NanoBananaGrounding) or multiple images (1-10) with the same powerful grounding, search, and thinking capabilities. This is the recommended node for new workflows.
+
+**Inputs:**
+
+*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3-pro-image-preview` for advanced capabilities (default: `gemini-3-pro-image-preview`).
+*   `prompt` (STRING): The text prompt for image generation or manipulation.
+*   `image_count` (INT): Number of images to generate (1-10). When set to 1, behaves like NanoBananaGrounding; when >1, generates multiple sequential images (default: 1).
+*   `use_search` (BOOLEAN): Toggle to enable or disable Google Search functionality (default: `True`).
+*   `image_1` to `image_6` (IMAGE, optional): Up to six reference images. Provide at least one image for image-to-image generation.
+*   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (default: `1:1`).
+*   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
+*   `temperature` (FLOAT, optional): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic.
+
+**Available Aspect Ratios & Resolutions:**
+*   `1:1` - 1024x1024 (square)
+*   `2:3` - 832x1248 (portrait)
+*   `3:2` - 1248x832 (landscape)
+*   `3:4` - 864x1184 (portrait)
+*   `4:3` - 1184x864 (landscape)
+*   `4:5` - 896x1152 (portrait)
+*   `5:4` - 1152x896 (landscape)
+*   `9:16` - 768x1344 (vertical/video)
+*   `16:9` - 1344x768 (horizontal/video)
+*   `21:9` - 1536x672 (ultrawide)
+
+**Outputs:**
+
+*   `images` (IMAGE): Batch of generated images (single image when image_count=1, multiple images when image_count>1).
+*   `thinking` (STRING): The AI's thought process and reasoning (only available when using Vertex AI approach; shows helpful message for API users).
+*   `grounding_sources` (STRING): Citation information with source URLs and search queries used to generate the response.
+
+**Note:** When using the Google Generative AI API approach (as opposed to VertexAI), the thinking and grounding_sources outputs will include helpful messages about using Vertex AI for full capabilities.
 
 ## Example Usage
 
@@ -199,7 +253,7 @@ This node enables image generation that is grounded in real-time Google Search r
 6.  Connect the two outputs: `image` and `grounding_sources` to appropriate display nodes.
 7.  The `grounding_sources` output will contain citations and links to the sources used in generating the response.
 
-**Sample Prompt:** "Search for and visualize the current weather forecast for the next 5 days in Jakarta in a clean, modern glass hud style with the city as a bacground weather chart. Add a realistic visual of what I could wear each day."
+**Sample Prompt:** "Search for and visualize the current weather forecast for the next 5 days in Jakarta in a clean, modern glass hud style with the city as a background weather chart. Add a realistic visual of what I could wear each day."
 
 **Example Workflow:**
 - The node will perform a Google search based on your prompt
@@ -208,6 +262,19 @@ This node enables image generation that is grounded in real-time Google Search r
 
 <img width="1809" height="494" alt="Screenshot 2025-11-23 115440" src="https://github.com/user-attachments/assets/a5642e7c-d801-4a87-ba85-f7d2f4221541" />
 <img width="1920" height="814" alt="NanoBanana_Pro_00012_" src="https://github.com/user-attachments/assets/da5af049-01a3-49b2-88ba-26d8b92050e4" />
+
+**Sample Prompt:** "Using provided image ensure style consistency, composition and how data displayed. Search for and visualize the current weather forecast for the next 5 days in [CITY], with the city iconic spot as a background weather chart.
+
+CITY
+image 1 of 4 Jakarta.
+image 2 of 4 Tokyo.
+image 3 of 4 London.
+image 4 of 4 Amsterdam."
+
+**Example Workflow:**
+- The node will perform a Google search based on your prompt
+- Generate a set of images with image reference style based on the search results
+- List all sources and citations used in the generation process
 
 ## License
 

@@ -2,6 +2,23 @@
 
 All notable changes to the ComfyUI_Nano_Banana project will be documented in this file.
 
+## [5.0.0] - The Unified AIO & Multi Image Generation Update 2025-11-24
+### Added
+- All-In-One (AIO) Node
+  - New "Nano Banana All-in-One" node that combines all features from existing nodes
+  - Single node handles both single and multiple image generation (1-10 images)
+  - Includes grounding, search, thinking, aspect ratio, image size, and temperature controls
+  - Dynamic behavior based on image_count parameter: single image or multiple images
+- Multi Image Generation
+  - Support for generating up to 10 alternative images with grounding and search capabilities
+  - Images generated with numbered prompts (e.g., "Image 1 of 3", "Image 2 of 3") to create variations
+  - Combined outputs for multiple images, text responses, and grounding sources
+- Backward Compatibility Maintenance
+  - Retained existing nodes (NanoBanana, NanoBananaGrounding) for compatibility
+- Enhanced Node Architecture
+  - Cleaner, more maintainable code structure with shared functionality
+  - Reduced redundancy across node implementations
+
 ## [4.0.0] - The Grounding, Dual Approach & Project Structure Update 2025-11-23
 ### Added
 - Grounding with Search Results functionality
