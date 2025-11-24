@@ -14,7 +14,7 @@ This major update introduces a unified All-in-One (AIO) node that combines all f
 #### New Features:
 
 **All-in-One (AIO) Node!**
-A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image (like NanoBananaGrounding) or multiple images (like the deprecated NanoBananaInterleaved) with the same powerful grounding, search, and thinking capabilities.
+A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image or multiple images with the same powerful grounding, search, and thinking capabilities.
 
 **Multi Image Generation**
 Generate up to 10 alternative images (1-10) with grounding and search capabilities in a single node execution. Images are generated with numbered prompts (e.g., "Image 1 of 3", "Image 2 of 3") to create variations. All generated images, text responses, and grounding sources are combined into the appropriate outputs.
@@ -275,6 +275,10 @@ image 4 of 4 Amsterdam."
 - The node will perform a Google search based on your prompt
 - Generate a set of images with image reference style based on the search results
 - List all sources and citations used in the generation process
+
+<img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
+
+<img width="1024" height="1024" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" /> <img width="1024" height="1024" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" /> <img width="1024" height="1024" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />  <img width="1024" height="1024" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
 
 ## License
 
