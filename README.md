@@ -263,6 +263,8 @@ This unified node combines all features from the existing nodes into a single, p
 <img width="1809" height="494" alt="Screenshot 2025-11-23 115440" src="https://github.com/user-attachments/assets/a5642e7c-d801-4a87-ba85-f7d2f4221541" />
 <img width="1920" height="814" alt="NanoBanana_Pro_00012_" src="https://github.com/user-attachments/assets/da5af049-01a3-49b2-88ba-26d8b92050e4" />
 
+
+
 **Sample Prompt:** "Using provided image ensure style consistency, composition and how data displayed. Search for and visualize the current weather forecast for the next 5 days in [CITY], with the city iconic spot as a background weather chart.
 
 CITY
@@ -278,7 +280,7 @@ image 4 of 4 Amsterdam."
 
 <img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
 
-<img width="1024" height="1024" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" /> <img width="1024" height="1024" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" /> <img width="1024" height="1024" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />  <img width="1024" height="1024" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
+<img width="50%" height="auto" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />  <img width="50%" height="auto" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
 
 ## License
 
