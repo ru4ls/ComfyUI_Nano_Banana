@@ -264,6 +264,16 @@ This unified node combines all features from the existing nodes into a single, p
 <img width="1920" height="814" alt="NanoBanana_Pro_00012_" src="https://github.com/user-attachments/assets/da5af049-01a3-49b2-88ba-26d8b92050e4" />
 
 
+### Grounding with Search and Multi image Results Generation
+
+1.  Add the `NanoBanana AIO` node to your workflow.
+2.  Enter a `prompt` that requires current data or information from the web (e.g., weather forecasts, current events, trending topics) along with image variation guide (e.g., image 1 of 4 ..., image 2 of 4 ...).
+3.  Set `image_count` to desired number.
+4.  Toggle the `use_search` parameter to `True` to enable Google Search functionality.
+5.  Optionally connect reference images if needed.
+6.  Set the desired `aspect_ratio` and `image_size` based on your needs.
+7.  Connect the two outputs: `image` and `grounding_sources` to appropriate display nodes.
+8.  The `grounding_sources` output will contain citations and links to the sources used in generating the response.
 
 **Sample Prompt:** "Using provided image ensure style consistency, composition and how data displayed. Search for and visualize the current weather forecast for the next 5 days in [CITY], with the city iconic spot as a background weather chart.
 
@@ -275,7 +285,7 @@ image 4 of 4 Amsterdam."
 
 **Example Workflow:**
 - The node will perform a Google search based on your prompt
-- Generate a set of images with image reference style based on the search results
+- Generate a set of images along with image reference style based on the search results
 - List all sources and citations used in the generation process
 
 <img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
