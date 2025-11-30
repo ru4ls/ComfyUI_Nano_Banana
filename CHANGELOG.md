@@ -81,7 +81,7 @@ All notable changes to the ComfyUI_Nano_Banana project will be documented in thi
 - Non-functional width, height, and seed inputs
 - Old 1024x1024 limitation
 
-## [1.0.0] - Initial Release
+## [1.0.0] - Initial Release 2025-09-07
 ### Added
 - Basic Nano Banana node for text-to-image generation
 - Support for image-to-image workflows

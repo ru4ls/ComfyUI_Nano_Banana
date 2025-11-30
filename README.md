@@ -32,7 +32,7 @@ This major update introduces a unified All-in-One (AIO) node that combines all f
 #### Previous Features:
 
 **All-in-One (AIO) Node!**
-A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image (like NanoBananaGrounding) or multiple images (like the deprecated NanoBananaInterleaved) with the same powerful grounding, search, and thinking capabilities.
+A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image or multiple images with the same powerful grounding, search, and thinking capabilities.
 
 **Multi Image Generation**
 Generate up to 10 alternative images (1-10) with grounding and search capabilities in a single node execution. Images are generated with numbered prompts (e.g., "Image 1 of 3", "Image 2 of 3") to create variations. All generated images, text responses, and grounding sources are combined into the appropriate outputs.
@@ -236,6 +236,18 @@ This node supports conversational image generation and editing with preserved co
 <img width="1809" height="494" alt="Screenshot 2025-11-23 115440" src="https://github.com/user-attachments/assets/a5642e7c-d801-4a87-ba85-f7d2f4221541" />
 <img width="1920" height="814" alt="NanoBanana_Pro_00012_" src="https://github.com/user-attachments/assets/da5af049-01a3-49b2-88ba-26d8b92050e4" />
 
+
+### Grounding with Search and Multi image Results Generation
+
+1.  Add the `NanoBanana AIO` node to your workflow.
+2.  Enter a `prompt` that requires current data or information from the web (e.g., weather forecasts, current events, trending topics) along with image variation guide (e.g., image 1 of 4 ..., image 2 of 4 ...).
+3.  Set `image_count` to desired number.
+4.  Toggle the `use_search` parameter to `True` to enable Google Search functionality.
+5.  Optionally connect reference images if needed.
+6.  Set the desired `aspect_ratio` and `image_size` based on your needs.
+7.  Connect the two outputs: `image` and `grounding_sources` to appropriate display nodes.
+8.  The `grounding_sources` output will contain citations and links to the sources used in generating the response.
+
 **Sample Prompt:** "Using provided image ensure style consistency, composition and how data displayed. Search for and visualize the current weather forecast for the next 5 days in [CITY], with the city iconic spot as a background weather chart.
 
 CITY
@@ -246,9 +258,8 @@ image 4 of 4 Amsterdam."
 
 **Example Workflow:**
 - The node will perform a Google search based on your prompt
-- Generate a set of images with image reference style based on the search results
+- Generate a set of images along with image reference style based on the search results
 - List all sources and citations used in the generation process
-
 
 ### Multi-Turn Chat Conversation (with preserved context)
 
@@ -267,6 +278,9 @@ image 4 of 4 Amsterdam."
 - Second execution: "Change the color of the liquid inside the glass bottle to a vibrant royal blue"
 - Third execution: "Extreme close-up on the glass texture and silver cap of the blue perfume bottle. The framing is cropped tightly and weighted to the left"
 
+<img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
+
+<img width="50%" height="auto" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />  <img width="50%" height="auto" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
 
 ## License
 
