@@ -11,6 +11,7 @@ class NanoBananaAIO:
     """A unified multimodal node combining all features: single/multiple image generation, grounding, search, and thinking capabilities."""
     def __init__(self):
         self.client = None
+        self._preview_warning_shown = False  # Track if warning was shown
 
     @classmethod
     def INPUT_TYPES(s):
@@ -36,6 +37,33 @@ class NanoBananaAIO:
 
     FUNCTION = "generate_unified"
     CATEGORY = "Ru4ls/NanoBanana"
+
+    def _create_config(self, aspect_ratio, image_size, temperature, use_search, model_name):
+        """Centralized config creation with proper AFC handling."""
+        # Show warning only once per node execution
+        if "preview" in model_name and not self._preview_warning_shown:
+            print(f"Warning: Using preview model {model_name} which may have unstable tool support")
+            self._preview_warning_shown = True
+
+        config = types.GenerateContentConfig(
+            response_modalities=["TEXT", "IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio=aspect_ratio,
+                image_size=image_size
+            ),
+            temperature=temperature,
+            # FIX: Disable AFC to prevent malformed function calls
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
+        )
+
+        if use_search:
+            try:
+                # FIX: Add tool safely
+                config.tools = [types.Tool(google_search=types.GoogleSearch())]
+            except Exception as e:
+                print(f"Warning: Search tool not supported: {e}")
+
+        return config
 
     def _handle_error(self, message):
         print(f"\033[91mERROR: {message}\033[0m")
@@ -103,55 +131,14 @@ class NanoBananaAIO:
             # Use global location for nanobanana models as they may only be available on global endpoint
             location = "global" if "gemini-3-pro" in model_name else LOCATION
             client = genai.Client(vertexai=True, project=PROJECT_ID, location=location)
-
-            # Create the full configuration with tools if search is enabled - only for supported models
-            if use_search and "gemini-3-pro" in model_name:
-                config = types.GenerateContentConfig(
-                    response_modalities=["TEXT", "IMAGE"],
-                    image_config=types.ImageConfig(
-                        aspect_ratio=aspect_ratio,
-                        image_size=image_size
-                    ),
-                    temperature=temperature
-                )
-
-                # Add search tool if use_search is True and model supports it
-                google_search = types.Tool(google_search=types.GoogleSearch())
-                config.tools = [google_search]
-            else:
-                # For models that don't support tools or when search is disabled
-                config = types.GenerateContentConfig(
-                    response_modalities=["TEXT", "IMAGE"],
-                    image_config=types.ImageConfig(
-                        aspect_ratio=aspect_ratio,
-                        image_size=image_size
-                    ),
-                    temperature=temperature
-                )
         else:  # API approach
             if not GOOGLE_API_KEY:
                 return self._handle_error("GOOGLE_API_KEY not configured in .env for API approach")
 
             client = genai.Client(api_key=GOOGLE_API_KEY)
 
-            # Create the full configuration with tools if search is enabled
-            config = types.GenerateContentConfig(
-                response_modalities=["TEXT", "IMAGE"],
-                image_config=types.ImageConfig(
-                    aspect_ratio=aspect_ratio,
-                    image_size=image_size
-                ),
-                temperature=temperature
-            )
-
-            # Add search tool if use_search is True
-            tools = []
-            if use_search:
-                google_search = types.Tool(google_search=types.GoogleSearch())
-                tools.append(google_search)
-
-            if tools:
-                config.tools = tools
+        # Create config using the centralized method
+        config = self._create_config(aspect_ratio, image_size, temperature, use_search, model_name)
 
         response = client.models.generate_content(
             model=model_name,
@@ -166,6 +153,12 @@ class NanoBananaAIO:
         # Check if generation was successful
         if hasattr(response.candidates[0], 'finish_reason') and response.candidates[0].finish_reason != types.FinishReason.STOP:
             reason = response.candidates[0].finish_reason
+            # Add debug information as suggested in the error report
+            print(f"Debug: Full response - {response}")
+            if hasattr(response, 'candidates') and response.candidates:
+                print(f"Debug: Candidates - {response.candidates[0]}")
+                if hasattr(response.candidates[0], 'content'):
+                    print(f"Debug: Parts - {response.candidates[0].content.parts}")
             return self._handle_error(f"Generation failed with reason: {reason}")
 
         # Parse the response
@@ -216,55 +209,14 @@ class NanoBananaAIO:
                 # Use global location for nanobanana models as they may only be available on global endpoint
                 location = "global" if "gemini-3-pro" in model_name else LOCATION
                 client = genai.Client(vertexai=True, project=PROJECT_ID, location=location)
-
-                # Create the full configuration with tools if search is enabled - only for supported models
-                if use_search and "gemini-3-pro" in model_name:
-                    config = types.GenerateContentConfig(
-                        response_modalities=["TEXT", "IMAGE"],
-                        image_config=types.ImageConfig(
-                            aspect_ratio=aspect_ratio,
-                            image_size=image_size
-                        ),
-                        temperature=temperature
-                    )
-
-                    # Add search tool if use_search is True and model supports it
-                    google_search = types.Tool(google_search=types.GoogleSearch())
-                    config.tools = [google_search]
-                else:
-                    # For models that don't support tools or when search is disabled
-                    config = types.GenerateContentConfig(
-                        response_modalities=["TEXT", "IMAGE"],
-                        image_config=types.ImageConfig(
-                            aspect_ratio=aspect_ratio,
-                            image_size=image_size
-                        ),
-                        temperature=temperature
-                    )
             else:  # API approach
                 if not GOOGLE_API_KEY:
                     return self._handle_error("GOOGLE_API_KEY not configured in .env for API approach")
 
                 client = genai.Client(api_key=GOOGLE_API_KEY)
 
-                # Create the full configuration with tools if search is enabled
-                config = types.GenerateContentConfig(
-                    response_modalities=["TEXT", "IMAGE"],
-                    image_config=types.ImageConfig(
-                        aspect_ratio=aspect_ratio,
-                        image_size=image_size
-                    ),
-                    temperature=temperature
-                )
-
-                # Add search tool if use_search is True
-                tools = []
-                if use_search:
-                    google_search = types.Tool(google_search=types.GoogleSearch())
-                    tools.append(google_search)
-
-                if tools:
-                    config.tools = tools
+            # Create config using the centralized method
+            config = self._create_config(aspect_ratio, image_size, temperature, use_search, model_name)
 
             response = client.models.generate_content(
                 model=model_name,
@@ -279,6 +231,12 @@ class NanoBananaAIO:
             # Check if generation was successful
             if hasattr(response.candidates[0], 'finish_reason') and response.candidates[0].finish_reason != types.FinishReason.STOP:
                 reason = response.candidates[0].finish_reason
+                # Add debug information as suggested in the error report
+                print(f"Debug: Full response - {response}")
+                if hasattr(response, 'candidates') and response.candidates:
+                    print(f"Debug: Candidates - {response.candidates[0]}")
+                    if hasattr(response.candidates[0], 'content'):
+                        print(f"Debug: Parts - {response.candidates[0].content.parts}")
                 return self._handle_error(f"Generation failed with reason: {reason}")
 
             # Parse the response
