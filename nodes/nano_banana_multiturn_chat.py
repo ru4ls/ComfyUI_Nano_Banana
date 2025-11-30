@@ -22,6 +22,7 @@ class NanoBananaMultiTurnChat:
         self.current_aspect_ratio = None
         self.current_image_size = None
         self.current_temperature = None
+        self._preview_warning_shown = False  # Track if warning was shown
 
     @classmethod
     def INPUT_TYPES(s):
@@ -77,6 +78,11 @@ class NanoBananaMultiTurnChat:
                 self.conversation_history = []
                 print("Chat session reset.")
 
+            # Show warning for preview models
+            if "preview" in model_name and not self._preview_warning_shown:
+                print(f"Warning: Using preview model {model_name} which may have unstable tool support")
+                self._preview_warning_shown = True
+
             # Create client for this request
             client = self._create_client(approach, model_name)
 
@@ -100,7 +106,9 @@ class NanoBananaMultiTurnChat:
                     aspect_ratio=aspect_ratio,
                     image_size=image_size
                 ),
-                temperature=temperature
+                temperature=temperature,
+                # FIX: Disable AFC to prevent malformed function calls
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)
             )
 
             # Create and send message in a fresh chat session
@@ -120,6 +128,12 @@ class NanoBananaMultiTurnChat:
             # Check if generation was successful
             if hasattr(response.candidates[0], 'finish_reason') and response.candidates[0].finish_reason != types.FinishReason.STOP:
                 reason = response.candidates[0].finish_reason
+                # Add debug information
+                print(f"Debug: Full response - {response}")
+                if hasattr(response, 'candidates') and response.candidates:
+                    print(f"Debug: Candidates - {response.candidates[0]}")
+                    if hasattr(response.candidates[0], 'content'):
+                        print(f"Debug: Parts - {response.candidates[0].content.parts}")
                 return self._handle_error(f"Generation failed with reason: {reason}")
 
             # Parse the response
