@@ -2,6 +2,13 @@
 
 All notable changes to the ComfyUI_Nano_Banana project will be documented in this file.
 
+## [6.0.1] - Fix for MALFORMED_FUNCTION_CALL Issue #12 2025-11-30
+### Fixed
+- MALFORMED_FUNCTION_CALL Error
+  - Fixed issue #12: MALFORMED_FUNCTION_CALL error when using Google GenAI SDK with gemini-3-pro-image-preview model and Automatic Function Calling (AFC)
+  - Added explicit AFC (Automatic Function Calling) disable configuration to prevent malformed function call errors
+  - Enhanced error handling with additional debug information
+
 ## [6.0.0] - The Multi-Turn Chat, Deprecation & Interactive Image Generation Update 2025-11-30
 ### Added
 - Multi-Turn Chat Node

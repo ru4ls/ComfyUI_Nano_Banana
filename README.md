@@ -8,6 +8,16 @@ A set of custom nodes for ComfyUI that leverage both Google Vertex AI and Google
 
 ## What's New
 
+### Version 6.0.1 - Fix for MALFORMED_FUNCTION_CALL Issue
+This patch update fixes the MALFORMED_FUNCTION_CALL error that occurred when using the Google GenAI SDK with the gemini-3-pro-image-preview model and Automatic Function Calling (AFC).
+
+#### Fixes:
+
+**Fixed Issue #12:**
+The MALFORMED_FUNCTION_CALL error has been resolved by explicitly disabling Automatic Function Calling (AFC) configuration in the Google GenAI SDK, preventing malformed function call errors when using the gemini-3-pro-image-preview model. The update also includes enhanced error handling.
+
+---
+
 ### Version 6.0 - The Multi-Turn Chat, Deprecation & Interactive Image Generation Update
 This major update introduces a Multi-Turn Chat node that enables conversational image generation and editing with preserved context across multiple interactions, and deprecates legacy nodes in favor of a cleaner architecture.
 
@@ -23,25 +33,6 @@ The node preserves conversation flow across multiple node executions, allowing f
 
 **Deprecation of Legacy Nodes**
 The NanoBanana and NanoBananaGrounding nodes are now deprecated in favor of the unified NanoBananaAIO node. All functionality from these nodes has been incorporated into the AIO node, resulting in a cleaner architecture with reduced code duplication and improved maintainability.
-
----
-
-### Version 5.0 - The Unified AIO & Multi Image Generation Update
-This major update introduces a unified All-in-One (AIO) node that combines all features from existing nodes into a single, powerful interface with support for both single and multiple image generation.
-
-#### Previous Features:
-
-**All-in-One (AIO) Node!**
-A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image or multiple images with the same powerful grounding, search, and thinking capabilities.
-
-**Multi Image Generation**
-Generate up to 10 alternative images (1-10) with grounding and search capabilities in a single node execution. Images are generated with numbered prompts (e.g., "Image 1 of 3", "Image 2 of 3") to create variations. All generated images, text responses, and grounding sources are combined into the appropriate outputs.
-
-**Backward Compatibility**
-Existing nodes (NanoBanana, NanoBananaGrounding) are maintained for compatibility with existing workflows.
-
-**Cleaner Architecture**
-Reduced code redundancy with shared functionality between single and multiple image generation modes, making the codebase more maintainable and efficient.
 
 ---
 
@@ -264,7 +255,7 @@ image 4 of 4 Amsterdam."
 <img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
 <img width="800" height="800"  alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" />
 <img width="800" height="800"  alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" />
-<img width="800" height="800"  alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" /> 
+<img width="800" height="800"  alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />
 <img width="800" height="800"  alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
 
 ### Multi-Turn Chat Conversation (with preserved context)
