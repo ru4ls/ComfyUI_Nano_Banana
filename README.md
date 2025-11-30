@@ -261,6 +261,12 @@ image 4 of 4 Amsterdam."
 - Generate a set of images along with image reference style based on the search results
 - List all sources and citations used in the generation process
 
+<img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
+<img width="50%" height="auto" align="left" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" />
+<img width="50%" height="auto" align="right" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" />
+<img width="50%" height="auto" align="left" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" /> 
+<img width="50%" height="auto" align="right" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
+
 ### Multi-Turn Chat Conversation (with preserved context)
 
 1.  Add the `NanoBananaMultiTurnChat` node to your workflow.
@@ -278,9 +284,10 @@ image 4 of 4 Amsterdam."
 - Second execution: "Change the color of the liquid inside the glass bottle to a vibrant royal blue"
 - Third execution: "Extreme close-up on the glass texture and silver cap of the blue perfume bottle. The framing is cropped tightly and weighted to the left"
 
-<img width="1736" height="651" alt="Screenshot 2025-11-24 104050" src="https://github.com/user-attachments/assets/e4f6e98a-6df9-4db7-b769-ea15c3d15875" />
+<img width="1763" height="477" alt="Screenshot 2025-11-30 095242" src="https://github.com/user-attachments/assets/eed7e8ba-3afa-498d-9221-8d7f1fd25efa" />
+<img width="1764" height="473" alt="Screenshot 2025-11-30 095511" src="https://github.com/user-attachments/assets/25b80fb6-5581-4d5e-b665-cb5c04b0acc7" />
+<img width="1768" height="473" alt="Screenshot 2025-11-30 100045" src="https://github.com/user-attachments/assets/b587ce75-5235-4174-8feb-b9fa5562b814" />
 
-<img width="50%" height="auto" alt="NanoBanana_AIO_00037_" src="https://github.com/user-attachments/assets/406a0440-8769-4dcc-b004-d5cd6be05fcb" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00038_" src="https://github.com/user-attachments/assets/8f43147c-c60e-45c1-9760-03d2d76ef540" /> <img width="50%" height="auto" alt="NanoBanana_AIO_00039_" src="https://github.com/user-attachments/assets/0534bf8a-87e4-4eb0-9df7-f25dbd61c8b0" />  <img width="50%" height="auto" alt="NanoBanana_AIO_00040_" src="https://github.com/user-attachments/assets/025163b3-a910-41b9-a777-39206d166675" />
 
 ## License
 
