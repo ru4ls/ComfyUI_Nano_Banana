@@ -2,6 +2,27 @@
 
 All notable changes to the ComfyUI_Nano_Banana project will be documented in this file.
 
+## [6.0.0] - The Multi-Turn Chat, Deprecation & Interactive Image Generation Update 2025-11-30
+### Added
+- Multi-Turn Chat Node
+  - New "Nano Banana Multi-Turn Chat" node that supports conversational image generation and editing
+  - Maintains conversation history and allows iterative image modifications
+  - Accepts initial images to start conversations and builds upon them in subsequent turns
+  - Returns generated image, text response, metadata, and conversation history
+  - Includes reset_chat functionality to start fresh conversations
+- Enhanced Conversation Context
+  - Ability to reference previous images as context for new generations
+  - Preserves conversation flow across multiple node executions
+  - Improved error handling for client connection issues
+### Changed
+- Deprecation of Legacy Nodes
+  - NanoBanana and NanoBananaGrounding nodes are now deprecated in favor of the unified NanoBananaAIO
+  - Updated documentation to reflect the deprecation status
+  - All functionality from the deprecated nodes is available in the AIO node
+- Node Architecture Improvement
+  - Cleaner codebase with removal of redundant legacy nodes
+  - Reduced code duplication and improved maintainability
+
 ## [5.0.0] - The Unified AIO & Multi Image Generation Update 2025-11-24
 ### Added
 - All-In-One (AIO) Node

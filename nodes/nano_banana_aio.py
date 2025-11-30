@@ -35,7 +35,7 @@ class NanoBananaAIO:
     RETURN_NAMES = ("images", "thinking", "grounding_sources")
 
     FUNCTION = "generate_unified"
-    CATEGORY = "Ru4ls/NanoBanana/AIO"
+    CATEGORY = "Ru4ls/NanoBanana"
 
     def _handle_error(self, message):
         print(f"\033[91mERROR: {message}\033[0m")

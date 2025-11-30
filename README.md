@@ -8,10 +8,28 @@ A set of custom nodes for ComfyUI that leverage both Google Vertex AI and Google
 
 ## What's New
 
+### Version 6.0 - The Multi-Turn Chat, Deprecation & Interactive Image Generation Update
+This major update introduces a Multi-Turn Chat node that enables conversational image generation and editing with preserved context across multiple interactions, and deprecates legacy nodes in favor of a cleaner architecture.
+
+#### New Features:
+
+**Multi-Turn Chat Node!**
+A new "Nano Banana Multi-Turn Chat" node that supports conversational image generation and editing. Maintains conversation history and allows iterative image modifications by referencing previous images as context for new generations. Includes reset functionality to start fresh conversations.
+
+**Enhanced Conversation Context**
+The node preserves conversation flow across multiple node executions, allowing for iterative improvements and refinements to generated images. Accepts initial images to start conversations and builds upon them in subsequent turns.
+
+#### Changes:
+
+**Deprecation of Legacy Nodes**
+The NanoBanana and NanoBananaGrounding nodes are now deprecated in favor of the unified NanoBananaAIO node. All functionality from these nodes has been incorporated into the AIO node, resulting in a cleaner architecture with reduced code duplication and improved maintainability.
+
+---
+
 ### Version 5.0 - The Unified AIO & Multi Image Generation Update
 This major update introduces a unified All-in-One (AIO) node that combines all features from existing nodes into a single, powerful interface with support for both single and multiple image generation.
 
-#### New Features:
+#### Previous Features:
 
 **All-in-One (AIO) Node!**
 A new unified "Nano Banana All-in-One" node that combines all features from existing nodes into a single interface. The node dynamically adapts its behavior based on the `image_count` parameter - generating a single image (like NanoBananaGrounding) or multiple images (like the deprecated NanoBananaInterleaved) with the same powerful grounding, search, and thinking capabilities.
@@ -26,32 +44,6 @@ Existing nodes (NanoBanana, NanoBananaGrounding) are maintained for compatibilit
 Reduced code redundancy with shared functionality between single and multiple image generation modes, making the codebase more maintainable and efficient.
 
 ---
-
-### Version 4.0 - The Grounding, Dual Approach & Project Structure Update
-This major update added powerful grounding with Google Search functionality, support for both Google Vertex AI and Google Generative AI API approaches, automatic project reorganization, and enhanced thinking process visibility.
-
-#### Previous Features:
-
-**Grounding with Search Results!**
-Generate images that are grounded in real-time Google Search results, with proper citations and source references. The "Nano Banana Grounding with Search" node enables fact-based image generation with verifiable sources.
-
-**Enhanced Output Information**
-The grounding node provides three outputs: generated image, text response, and grounding sources with citations, allowing full transparency into the information sources used.
-
-**Toggle Search Functionality**
-The grounding node includes a boolean switch to enable or disable the Google Search tool as needed.
-
-**Dual Authentication Approach Support!**
-Use either Google Vertex AI approach (with PROJECT_ID and LOCATION) or Google Generative AI API approach (with GOOGLE_API_KEY) - the system automatically detects and uses the available credentials.
-
-**Thinking Process Output**
-The base Nano Banana node outputs the AI's thought process when using Vertex AI, providing insights into the AI's reasoning and decision-making.
-
-**Project Structure Reorganization**
-The codebase has been reorganized into dedicated `core/`, `nodes/`, and `utils/` directories for better maintainability and following Python best practices.
-
-**Automatic Location Override**
-Models like gemini-3-pro-image-preview automatically use the global endpoint regardless of your LOCATION setting, ensuring compatibility across different user configurations.
 
 For a complete history of changes, see the [CHANGELOG.md](CHANGELOG.md) file.
 
@@ -114,69 +106,17 @@ The system automatically detects and uses the available credentials:
 
 ## Nodes
 
-### Nano Banana (Will be deprecated next update)
+### Nano Banana (DEPRECATED)
 
-This node provides a flexible interface for image generation with support for multiple aspect ratios and image sizes, supporting text-to-image and image-to-image workflows with up to three reference images using the official Google Generative AI SDK. New features include model thought process visibility.
+This node is now deprecated. Please use the "Nano Banana All-in-One" node instead, which includes all the functionality of this node plus additional features like multiple image generation and grounding capabilities.
 
-**Inputs:**
+This node previously provided a flexible interface for image generation with support for multiple aspect ratios and image sizes, supporting text-to-image and image-to-image workflows with up to three reference images using the official Google Generative AI SDK. New features included model thought process visibility.
 
-*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3-pro-image-preview` for advanced capabilities (default: `gemini-3-pro-image-preview`).
-*   `prompt` (STRING): The text prompt for image generation or manipulation.
-*   `image_1` to `image_6` (IMAGE, optional): Up to six reference images. Provide at least one image for image-to-image generation.
-*   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (default: `1:1`).
-*   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
-*   `temperature` (FLOAT, optional): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic.
+### Nano Banana Grounding (DEPRECATED)
 
-**Available Aspect Ratios & Resolutions:**
-*   `1:1` - 1024x1024 (square)
-*   `2:3` - 832x1248 (portrait)
-*   `3:2` - 1248x832 (landscape)
-*   `3:4` - 864x1184 (portrait)
-*   `4:3` - 1184x864 (landscape)
-*   `4:5` - 896x1152 (portrait)
-*   `5:4` - 1152x896 (landscape)
-*   `9:16` - 768x1344 (vertical/video)
-*   `16:9` - 1344x768 (horizontal/video)
-*   `21:9` - 1536x672 (ultrawide)
+This node is now deprecated. Please use the "Nano Banana All-in-One" node instead, which includes all the functionality of this node plus additional features like multiple image generation and improved capabilities.
 
-**Outputs:**
-
-*   `image` (IMAGE): The generated image.
-*   `thinking` (STRING): The AI's thought process and reasoning (only available when using Vertex AI approach; shows helpful message for API users).
-
-### Nano Banana Grounding (Will be deprecated next update)
-
-This node enables image generation that is grounded in real-time Google Search results, with proper citations and source references. It allows for fact-based image generation with verifiable information from the web. The node provides transparency into the information sources used to generate the content.
-
-**Inputs:**
-
-*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3-pro-image-preview` for advanced capabilities (default: `gemini-3-pro-image-preview`).
-*   `prompt` (STRING): The text prompt for image generation that will be used to search and generate images based on search results.
-*   `use_search` (BOOLEAN): Toggle to enable or disable Google Search functionality (default: `True`).
-*   `image_1` to `image_6` (IMAGE, optional): Up to six reference images. Provide at least one image for image-to-image generation.
-*   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (default: `1:1`).
-*   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
-*   `temperature` (FLOAT, optional): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic.
-
-**Available Aspect Ratios & Resolutions:**
-*   `1:1` - 1024x1024 (square)
-*   `2:3` - 832x1248 (portrait)
-*   `3:2` - 1248x832 (landscape)
-*   `3:4` - 864x1184 (portrait)
-*   `4:3` - 1184x864 (landscape)
-*   `4:5` - 896x1152 (portrait)
-*   `5:4` - 1152x896 (landscape)
-*   `9:16` - 768x1344 (vertical/video)
-*   `16:9` - 1344x768 (horizontal/video)
-*   `21:9` - 1536x672 (ultrawide)
-
-**Outputs:**
-
-*   `image` (IMAGE): The generated image based on search results.
-*   `text_response` (STRING): The AI's response text (only available when using Vertex AI approach; shows helpful message for API users).
-*   `grounding_sources` (STRING): Citation information with source URLs and search queries used to generate the response.
-
-**Note:** When using the Google Generative AI API approach (as opposed to VertexAI), the text_response and grounding_sources will include helpful messages about using Vertex AI for full capabilities.
+This node previously enabled image generation that was grounded in real-time Google Search results, with proper citations and source references. It allowed for fact-based image generation with verifiable information from the web.
 
 ### Nano Banana All-in-One (AIO)
 
@@ -212,6 +152,39 @@ This unified node combines all features from the existing nodes into a single, p
 *   `grounding_sources` (STRING): Citation information with source URLs and search queries used to generate the response.
 
 **Note:** When using the Google Generative AI API approach (as opposed to VertexAI), the thinking and grounding_sources outputs will include helpful messages about using Vertex AI for full capabilities.
+
+### Nano Banana Multi-Turn Chat
+
+This node supports conversational image generation and editing with preserved context across multiple interactions. Maintains conversation history and allows iterative image modifications by referencing previous images as context for new generations. Includes reset functionality to start fresh conversations.
+
+**Inputs:**
+
+*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3-pro-image-preview` for advanced capabilities (default: `gemini-3-pro-image-preview`).
+*   `prompt` (STRING): The text prompt for image generation or modification based on previous conversation context.
+*   `reset_chat` (BOOLEAN): Toggle to reset the conversation history and start a fresh chat session (default: `False`).
+*   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (default: `1:1`).
+*   `image_size` (STRING): The output image quality/size. Options include: `1K`, `2K`, `4K` (default: `2K`).
+*   `temperature` (FLOAT): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic (default: 1.0).
+*   `image_input` (IMAGE, optional): Initial image to start the conversation with. Use this to provide an initial image for the first interaction in a conversation.
+
+**Available Aspect Ratios & Resolutions:**
+*   `1:1` - 1024x1024 (square)
+*   `2:3` - 832x1248 (portrait)
+*   `3:2` - 1248x832 (landscape)
+*   `3:4` - 864x1184 (portrait)
+*   `4:3` - 1184x864 (landscape)
+*   `4:5` - 896x1152 (portrait)
+*   `5:4` - 1152x896 (landscape)
+*   `9:16` - 768x1344 (vertical/video)
+*   `16:9` - 1344x768 (horizontal/video)
+*   `21:9` - 1536x672 (ultrawide)
+
+**Outputs:**
+
+*   `image` (IMAGE): The generated image based on the current prompt and conversation context.
+*   `response_text` (STRING): The AI's response text to the current prompt.
+*   `metadata` (STRING): Generation metadata including finish reason and safety ratings.
+*   `chat_history` (STRING): Complete conversation history with all prompts and responses.
 
 ## Example Usage
 
@@ -275,6 +248,25 @@ image 4 of 4 Amsterdam."
 - The node will perform a Google search based on your prompt
 - Generate a set of images with image reference style based on the search results
 - List all sources and citations used in the generation process
+
+
+### Multi-Turn Chat Conversation (with preserved context)
+
+1.  Add the `NanoBananaMultiTurnChat` node to your workflow.
+2.  Enter your initial `prompt` to generate the first image.
+3.  Optionally connect an initial `image_input` to start the conversation with a specific image.
+4.  Set your desired `aspect_ratio` and `image_size` parameters.
+5.  Execute the node to generate the initial image and response.
+6.  For subsequent interactions, use the same node instance with the same parameters but change the `prompt` to continue the conversation and modify the image iteratively.
+7.  Use `reset_chat` to start a fresh conversation when needed.
+8.  Connect the output `image` to a `PreviewImage` or `SaveImage` node to see the results.
+9.  The `chat_history` output shows the complete conversation history.
+
+**Example Workflow:**
+- First execution: "Create an image of a clear perfume bottle sitting on a vanity"
+- Second execution: "Change the color of the liquid inside the glass bottle to a vibrant royal blue"
+- Third execution: "Extreme close-up on the glass texture and silver cap of the blue perfume bottle. The framing is cropped tightly and weighted to the left"
+
 
 ## License
 
