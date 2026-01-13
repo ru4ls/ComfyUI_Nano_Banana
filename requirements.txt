@@ -7,9 +7,10 @@ python-dotenv
 # We list this transitional package because it has proven to enforce the
 # correct versioning of its underlying dependencies (like google-generativeai)
 # during installation in this environment.
-google-generativeai
+# google-generativeai (deprecated 'https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md')
 google-genai
 google-cloud-aiplatform
+google
 
 # For image processing (PIL) to handle image data, Assume its already installed with ComfyUI, commented out to avoid version conflicts
 # Pillow
