@@ -9,7 +9,7 @@ from ..utils.image_utils import tensor_to_pil
 
 class NanoBanana2AIO:
     """
-    Nano Banana 2 AIO node using gemini-3.1-flash-image-preview model.
+    Nano Banana 2 AIO node using gemini-3.1-flash-image model.
     Optimized for speed and high-volume use cases with support for:
     - Up to 14 reference images (10 objects + 4 characters)
     - New aspect ratios: 1:4, 4:1, 1:8, 8:1
@@ -22,7 +22,7 @@ class NanoBanana2AIO:
 
     @classmethod
     def INPUT_TYPES(s):
-        model_list = ["gemini-3.1-flash-image-preview"]
+        model_list = ["gemini-3.1-flash-image", "gemini-3.1-flash-image-preview"]
         return {
             "required": {
                 "model_name": (model_list, {"default": model_list[0]}),
@@ -30,6 +30,9 @@ class NanoBanana2AIO:
                 "image_count": ("INT", {"default": 1, "min": 1, "max": 10, "step": 1}),
                 "use_search": ("BOOLEAN", {"default": False}),
                 "use_image_search": ("BOOLEAN", {"default": False}),
+                "thinking_level": (["minimal", "high"], {"default": "minimal"}),
+                "include_thoughts": ("BOOLEAN", {"default": False}),
+                "seed": ("INT", {"default": 0, "min": 0, "max": 2147483647, "control_after_generate": True}),
             },
             "optional": {
                 "image_1": ("IMAGE",), "image_2": ("IMAGE",), "image_3": ("IMAGE",),
@@ -43,13 +46,13 @@ class NanoBanana2AIO:
             }
         }
 
-    RETURN_TYPES = ("IMAGE", "STRING", "STRING")
-    RETURN_NAMES = ("images", "thinking", "grounding_sources")
+    RETURN_TYPES = ("IMAGE", "STRING", "STRING", "IMAGE")
+    RETURN_NAMES = ("images", "thinking", "grounding_sources", "thought_images")
 
     FUNCTION = "generate_unified"
     CATEGORY = "Ru4ls/NanoBanana"
 
-    def _create_config(self, aspect_ratio, image_size, temperature, use_search, use_image_search, model_name):
+    def _create_config(self, aspect_ratio, image_size, temperature, use_search, use_image_search, model_name, thinking_level, include_thoughts, seed):
         """Centralized config creation with proper AFC handling and Image Search support."""
         if "preview" in model_name and not self._preview_warning_shown:
             print(f"Warning: Using preview model {model_name} which may have unstable tool support")
@@ -66,6 +69,11 @@ class NanoBanana2AIO:
             "response_modalities": ["TEXT", "IMAGE"],
             "image_config": types.ImageConfig(**image_config_kwargs),
             "temperature": temperature,
+            "seed": seed,
+            "thinking_config": types.ThinkingConfig(
+                thinking_level=thinking_level,
+                include_thoughts=include_thoughts,
+            ),
             "automatic_function_calling": types.AutomaticFunctionCallingConfig(disable=True)
         }
 
@@ -100,9 +108,52 @@ class NanoBanana2AIO:
 
     def _handle_error(self, message):
         print(f"\033[91mERROR: {message}\033[0m")
-        return (torch.zeros(1, 64, 64, 3), "", "")
+        return (torch.zeros(1, 64, 64, 3), "", "", torch.zeros(1, 64, 64, 3))
+
+    def _response_parts(self, response):
+        """Separate final response parts from thought parts."""
+        final_image_bytes = None
+        response_text_parts = []
+        thought_text_parts = []
+        thought_image_bytes = []
+
+        for part in response.candidates[0].content.parts:
+            is_thought = bool(getattr(part, "thought", False))
+            inline_data = getattr(part, "inline_data", None)
+            text = getattr(part, "text", None)
+
+            if inline_data:
+                if is_thought:
+                    thought_image_bytes.append(inline_data.data)
+                elif final_image_bytes is None:
+                    final_image_bytes = inline_data.data
+
+            if text:
+                if is_thought:
+                    thought_text_parts.append(text)
+                else:
+                    response_text_parts.append(text)
+
+        return {
+            "final_image_bytes": final_image_bytes,
+            "response_text": "".join(response_text_parts),
+            "thought_text": "".join(thought_text_parts),
+            "thought_image_bytes": thought_image_bytes,
+        }
+
+    def _image_bytes_to_tensor(self, image_bytes):
+        pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image_np = np.array(pil_image).astype(np.float32) / 255.0
+        return torch.from_numpy(image_np)[None,]
+
+    def _image_bytes_list_to_tensor(self, image_bytes_list):
+        tensors = [self._image_bytes_to_tensor(image_bytes) for image_bytes in image_bytes_list]
+        if tensors:
+            return torch.cat(tensors, dim=0)
+        return torch.zeros(1, 64, 64, 3)
 
     def generate_unified(self, model_name, prompt, image_count=1, use_search=True, use_image_search=False, 
+                         thinking_level="minimal", include_thoughts=False, seed=0,
                          image_1=None, image_2=None, image_3=None, image_4=None, image_5=None, 
                          image_6=None, image_7=None, image_8=None, image_9=None, image_10=None,
                          image_11=None, image_12=None, image_13=None, image_14=None, 
@@ -115,6 +166,13 @@ class NanoBanana2AIO:
 
             if not model_name:
                 return self._handle_error("Model name is required")
+
+            valid_thinking_levels = ["minimal", "high"]
+            if thinking_level not in valid_thinking_levels:
+                return self._handle_error(f"Invalid thinking level. Valid options: {', '.join(valid_thinking_levels)}")
+
+            if seed < 0 or seed > 2147483647:
+                return self._handle_error("Seed must be between 0 and 2147483647")
 
             if image_count < 1 or image_count > 10:
                 return self._handle_error("Image count must be between 1 and 10")
@@ -144,12 +202,12 @@ class NanoBanana2AIO:
             if image_count == 1:
                 return self._generate_single_image(
                     model_name, prompt, use_search, use_image_search, approach, contents,
-                    aspect_ratio, image_size, temperature
+                    aspect_ratio, image_size, temperature, thinking_level, include_thoughts, seed
                 )
             else:
                 return self._generate_multiple_images(
                     model_name, prompt, image_count, use_search, use_image_search, approach, contents,
-                    aspect_ratio, image_size, temperature
+                    aspect_ratio, image_size, temperature, thinking_level, include_thoughts, seed
                 )
 
         except ValueError as e:
@@ -159,7 +217,7 @@ class NanoBanana2AIO:
         except Exception as e:
             return self._handle_error(f"{type(e).__name__} in NanoBanana2AIO: {e}")
 
-    def _generate_single_image(self, model_name, prompt, use_search, use_image_search, approach, contents, aspect_ratio, image_size, temperature):
+    def _generate_single_image(self, model_name, prompt, use_search, use_image_search, approach, contents, aspect_ratio, image_size, temperature, thinking_level, include_thoughts, seed):
         """Generate a single image with grounding capabilities."""
         if approach == "VERTEXAI":
             if not PROJECT_ID or not LOCATION:
@@ -173,7 +231,7 @@ class NanoBanana2AIO:
 
             client = genai.Client(api_key=GOOGLE_API_KEY)
 
-        config = self._create_config(aspect_ratio, image_size, temperature, use_search, use_image_search, model_name)
+        config = self._create_config(aspect_ratio, image_size, temperature, use_search, use_image_search, model_name, thinking_level, include_thoughts, seed)
 
         response = client.models.generate_content(
             model=model_name,
@@ -193,14 +251,11 @@ class NanoBanana2AIO:
                     print(f"Debug: Parts - {response.candidates[0].content.parts}")
             return self._handle_error(f"Generation failed with reason: {reason}")
 
-        image_bytes = None
-        text_response = ""
-
-        for part in response.candidates[0].content.parts:
-            if part.inline_data and image_bytes is None:
-                image_bytes = part.inline_data.data
-            elif part.text:
-                text_response += part.text
+        parts = self._response_parts(response)
+        image_bytes = parts["final_image_bytes"]
+        text_response = parts["response_text"]
+        thinking = parts["thought_text"]
+        thought_images = self._image_bytes_list_to_tensor(parts["thought_image_bytes"])
 
         grounding_sources = self.extract_grounding_data(response)
 
@@ -209,26 +264,21 @@ class NanoBanana2AIO:
             print(f"Debug: Full response - {response}")
             print(f"Debug: Response parts - {response.candidates[0].content.parts}")
             print(f"Debug: Text response - {text_response[:500] if text_response else 'None'}")
+            print(f"Debug: Thinking response - {thinking[:500] if thinking else 'None'}")
             if grounding_sources:
                 print(f"Debug: Grounding sources - {grounding_sources[:500] if grounding_sources else 'None'}")
             return self._handle_error("No image data found in the API response.")
 
-        pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image_tensor = self._image_bytes_to_tensor(image_bytes)
 
-        image_np = np.array(pil_image).astype(np.float32) / 255.0
-        image_tensor = torch.from_numpy(image_np)[None,]
+        return (image_tensor, thinking, grounding_sources, thought_images)
 
-        if approach == "API":
-            text_response = "To access the full text response, please use Vertex AI approach with PROJECT_ID and LOCATION set up."
-            grounding_sources = f"{grounding_sources}\n\nFor full grounding capabilities, please use Vertex AI approach with PROJECT_ID and LOCATION configured."
-
-        return (image_tensor, text_response, grounding_sources)
-
-    def _generate_multiple_images(self, model_name, prompt, image_count, use_search, use_image_search, approach, contents, aspect_ratio, image_size, temperature):
+    def _generate_multiple_images(self, model_name, prompt, image_count, use_search, use_image_search, approach, contents, aspect_ratio, image_size, temperature, thinking_level, include_thoughts, seed):
         """Generate multiple images with grounding capabilities."""
         generated_images = []
-        all_text_responses = []
+        all_thinking_responses = []
         all_grounding_sources = []
+        all_thought_image_bytes = []
 
         for i in range(image_count):
             current_prompt = f"{prompt} (Image {i+1} of {image_count})"
@@ -246,7 +296,7 @@ class NanoBanana2AIO:
 
                 client = genai.Client(api_key=GOOGLE_API_KEY)
 
-            config = self._create_config(aspect_ratio, image_size, temperature, use_search, use_image_search, model_name)
+            config = self._create_config(aspect_ratio, image_size, temperature, use_search, use_image_search, model_name, thinking_level, include_thoughts, seed)
 
             response = client.models.generate_content(
                 model=model_name,
@@ -266,14 +316,11 @@ class NanoBanana2AIO:
                         print(f"Debug: Parts - {response.candidates[0].content.parts}")
                 return self._handle_error(f"Generation failed with reason: {reason}")
 
-            image_bytes = None
-            text_response = ""
-
-            for part in response.candidates[0].content.parts:
-                if part.inline_data and image_bytes is None:
-                    image_bytes = part.inline_data.data
-                elif part.text:
-                    text_response += part.text
+            parts = self._response_parts(response)
+            image_bytes = parts["final_image_bytes"]
+            text_response = parts["response_text"]
+            thinking = parts["thought_text"]
+            all_thought_image_bytes.extend(parts["thought_image_bytes"])
 
             grounding_sources = self.extract_grounding_data(response)
 
@@ -281,15 +328,13 @@ class NanoBanana2AIO:
                 # Debug: print response parts to help diagnose the issue
                 print(f"Debug: Response parts - {response.candidates[0].content.parts}")
                 print(f"Debug: Text response - {text_response[:500] if text_response else 'None'}")
+                print(f"Debug: Thinking response - {thinking[:500] if thinking else 'None'}")
                 return self._handle_error("No image data found in the API response.")
 
-            pil_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-
-            image_np = np.array(pil_image).astype(np.float32) / 255.0
-            image_tensor = torch.from_numpy(image_np)[None,]
+            image_tensor = self._image_bytes_to_tensor(image_bytes)
 
             generated_images.append(image_tensor)
-            all_text_responses.append(text_response)
+            all_thinking_responses.append(thinking)
             all_grounding_sources.append(grounding_sources)
 
         if len(generated_images) > 0:
@@ -297,14 +342,11 @@ class NanoBanana2AIO:
         else:
             return self._handle_error("No images were generated.")
 
-        combined_text_responses = "\n\n".join(all_text_responses)
+        combined_thinking_responses = "\n\n".join(all_thinking_responses)
         combined_grounding_sources = "\n\n".join(all_grounding_sources)
+        thought_images = self._image_bytes_list_to_tensor(all_thought_image_bytes)
 
-        if approach == "API":
-            combined_text_responses = "To access the full text responses, please use Vertex AI approach with PROJECT_ID and LOCATION set up."
-            combined_grounding_sources = f"{combined_grounding_sources}\n\nFor full grounding capabilities, please use Vertex AI approach with PROJECT_ID and LOCATION configured."
-
-        return (combined_images, combined_text_responses, combined_grounding_sources)
+        return (combined_images, combined_thinking_responses, combined_grounding_sources, thought_images)
 
     def extract_grounding_data(self, response):
         """Extracts grounding sources from the response."""
@@ -315,7 +357,7 @@ class NanoBanana2AIO:
 
             text_content = ""
             for part in candidate.content.parts:
-                if hasattr(part, 'text') and part.text:
+                if hasattr(part, 'text') and part.text and not bool(getattr(part, "thought", False)):
                     text_content += part.text
 
             if text_content:
@@ -374,6 +416,6 @@ class NanoBanana2AIO:
             candidate = response.candidates[0]
             text_content = ""
             for part in candidate.content.parts:
-                if hasattr(part, 'text') and part.text:
+                if hasattr(part, 'text') and part.text and not bool(getattr(part, "thought", False)):
                     text_content += part.text
             return text_content + f"\n\nGrounding information not available: {str(e)}"

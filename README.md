@@ -9,16 +9,18 @@ A set of custom nodes for ComfyUI that leverage both Google Vertex AI and Google
 ## What's New
 
 ### Version 6.1.0 - Nano Banana 2 Support
-This minor update adds support for the new Nano Banana 2 model (gemini-3.1-flash-image-preview), optimized for speed and high-volume use cases.
+This minor update adds support for the new Nano Banana 2 model (gemini-3.1-flash-image), optimized for speed and high-volume use cases.
 
 #### New Features:
 
 **New Nano Banana 2 AIO Node:**
-A dedicated node for the gemini-3.1-flash-image-preview model with support for:
+A dedicated node for the gemini-3.1-flash-image model with support for:
 - Up to 14 reference images (10 objects + 4 characters)
 - New aspect ratios: 1:4, 4:1, 1:8, 8:1
 - 512px (0.5K) resolution option
 - Google Image Search grounding alongside Web Search
+- Thinking level controls and optional returned thought text/images
+- Seed control with fixed, increment, decrement, and randomize modes
 
 **New Nano Banana 2 Multi-Turn Chat Node:**
 A conversational image generation and editing node with all Nano Banana 2 features:
@@ -199,17 +201,20 @@ This node supports conversational image generation and editing with preserved co
 
 ### Nano Banana 2 AIO
 
-A dedicated node for the **gemini-3.1-flash-image-preview** model, optimized for speed and high-volume use cases. This node provides all the latest features including support for up to 14 reference images, new extreme aspect ratios, and Google Image Search grounding.
+A dedicated node for the **gemini-3.1-flash-image** model, optimized for speed and high-volume use cases. This node provides all the latest features including support for up to 14 reference images, new extreme aspect ratios, Google Image Search grounding, and configurable thinking.
 
 **Note:** Requires the latest `google-genai` package. Update with: `pip install google-genai --upgrade`
 
 **Inputs:**
 
-*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3.1-flash-image-preview` for high-efficiency image generation (default: `gemini-3.1-flash-image-preview`).
+*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3.1-flash-image` for high-efficiency image generation (default: `gemini-3.1-flash-image`; preview model remains selectable).
 *   `prompt` (STRING): The text prompt for image generation or manipulation.
 *   `image_count` (INT): Number of images to generate (1-10). When set to 1, behaves like single image generation; when >1, generates multiple sequential images (default: 1).
 *   `use_search` (BOOLEAN): Toggle to enable or disable Google Search functionality (default: `False`).
 *   `use_image_search` (BOOLEAN): Toggle to enable Google Image Search grounding for visual reference accuracy (default: `False`). Enable `use_search` to use this feature.
+*   `thinking_level` (STRING): Thinking budget for Nano Banana 2. Options: `minimal`, `high` (default: `minimal`).
+*   `include_thoughts` (BOOLEAN): Whether returned thought text and thought images should be exposed in the node outputs (default: `False`).
+*   `seed` (INT): Generation seed sent to the Gemini generation config. Use ComfyUI's seed control to keep it fixed, increment, decrement, or randomize it after each generation. Seeds are best-effort reproducibility controls, not guaranteed deterministic outputs.
 *   `image_1` to `image_14` (IMAGE, optional): Up to fourteen reference images. Gemini 3.1 Flash supports up to 10 object images with high-fidelity and up to 4 character images for consistency.
 *   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `1:4`, `1:8`, `2:3`, `3:2`, `3:4`, `4:1`, `4:3`, `4:5`, `5:4`, `8:1`, `9:16`, `16:9`, `21:9`, `Auto` (default: `1:1`). When set to `Auto`, the AI automatically determines the optimal aspect ratio.
 *   `image_size` (STRING): The output image quality/size. Options include: `512px`, `1K`, `2K`, `4K` (default: `2K`). The `512px` option is exclusive to Nano Banana 2.
@@ -236,24 +241,26 @@ A dedicated node for the **gemini-3.1-flash-image-preview** model, optimized for
 **Outputs:**
 
 *   `images` (IMAGE): Batch of generated images (single image when image_count=1, multiple images when image_count>1).
-*   `thinking` (STRING): The AI's thought process and reasoning (only available when using Vertex AI approach; shows helpful message for API users).
+*   `thinking` (STRING): Returned thought text when `include_thoughts` is enabled.
 *   `grounding_sources` (STRING): Citation information with source URLs and search queries used to generate the response. Includes both web and image search results when enabled.
-
-**Note:** When using the Google Generative AI API approach (as opposed to VertexAI), the thinking and grounding_sources outputs will include helpful messages about using Vertex AI for full capabilities.
+*   `thought_images` (IMAGE): Returned intermediate thought images when `include_thoughts` is enabled, or a blank placeholder image when none are returned.
 
 ### Nano Banana 2 Multi-Turn Chat
 
-A conversational image generation and editing node using the **gemini-3.1-flash-image-preview** model. Supports multi-turn conversations with preserved context, allowing iterative image modifications. Includes all Nano Banana 2 features: 14 reference images, extreme aspect ratios, and Image Search grounding.
+A conversational image generation and editing node using the **gemini-3.1-flash-image** model. Supports multi-turn conversations with preserved context, allowing iterative image modifications. Includes all Nano Banana 2 features: 14 reference images, extreme aspect ratios, Image Search grounding, and configurable thinking.
 
 **Note:** Requires the latest `google-genai` package. Update with: `pip install google-genai --upgrade`
 
 **Inputs:**
 
-*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3.1-flash-image-preview` for high-efficiency image generation (default: `gemini-3.1-flash-image-preview`).
+*   `model_name` (STRING): The Gemini model to use. Currently using: `gemini-3.1-flash-image` for high-efficiency image generation (default: `gemini-3.1-flash-image`; preview model remains selectable).
 *   `prompt` (STRING): The text prompt for image generation or modification based on previous conversation context.
 *   `reset_chat` (BOOLEAN): Toggle to reset the conversation history and start a fresh chat session (default: `False`).
 *   `use_search` (BOOLEAN): Toggle to enable or disable Google Search functionality (default: `False`).
 *   `use_image_search` (BOOLEAN): Toggle to enable Google Image Search grounding for visual reference accuracy (default: `False`). Enable `use_search` to use this feature.
+*   `thinking_level` (STRING): Thinking budget for Nano Banana 2. Options: `minimal`, `high` (default: `minimal`).
+*   `include_thoughts` (BOOLEAN): Whether returned thought text and thought images should be exposed in the node outputs (default: `False`).
+*   `seed` (INT): Generation seed sent to the Gemini generation config. Use ComfyUI's seed control to keep it fixed, increment, decrement, or randomize it after each generation. Seeds are best-effort reproducibility controls, not guaranteed deterministic outputs.
 *   `aspect_ratio` (STRING): The output aspect ratio for the generated image. Options include: `1:1`, `1:4`, `1:8`, `2:3`, `3:2`, `3:4`, `4:1`, `4:3`, `4:5`, `5:4`, `8:1`, `9:16`, `16:9`, `21:9`, `Auto` (default: `1:1`). When set to `Auto`, the AI automatically determines the optimal aspect ratio.
 *   `image_size` (STRING): The output image quality/size. Options include: `512px`, `1K`, `2K`, `4K` (default: `2K`). The `512px` option is exclusive to Nano Banana 2.
 *   `temperature` (FLOAT): Controls the creative randomness of the output. Higher values (e.g., 1.2) are more creative, lower values (e.g., 0.5) are more deterministic (default: 1.0).
@@ -283,13 +290,13 @@ A conversational image generation and editing node using the **gemini-3.1-flash-
 *   `response_text` (STRING): The AI's response text to the current prompt.
 *   `metadata` (STRING): Generation metadata including finish reason and safety ratings.
 *   `chat_history` (STRING): Complete conversation history with all prompts and responses.
+*   `thinking` (STRING): Returned thought text when `include_thoughts` is enabled.
+*   `thought_images` (IMAGE): Returned intermediate thought images when `include_thoughts` is enabled, or a blank placeholder image when none are returned.
 
 **Example Workflow:**
 - First execution: Connect reference images and enter "Create a product shot of this perfume bottle on a marble pedestal"
 - Second execution: "Change the background to a sunset beach scene"
 - Third execution: "Add water droplets on the bottle for a fresh look"
-
-**Note:** When using the Google Generative AI API approach (as opposed to VertexAI), outputs will include helpful messages about using Vertex AI for full capabilities.
 
 ## Example Usage
 

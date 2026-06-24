@@ -51,3 +51,8 @@ config.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Dev
+.ignore/
+.agents/
+.codex/
